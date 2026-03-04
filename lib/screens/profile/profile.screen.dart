@@ -1,5 +1,10 @@
+import 'dart:async';
+
+import 'package:fb_test2/models/user/user.model.dart';
 import 'package:fb_test2/screens/home/home.screen.dart';
 import 'package:fb_test2/services/user/user.service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -19,6 +24,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final formKey = GlobalKey<FormState>();
   final nameController = TextEditingController();
   final nicknameController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    final snapshot = await FirebaseDatabase.instance
+        .ref('members')
+        .child(FirebaseAuth.instance.currentUser!.uid)
+        .get();
+
+    if (snapshot.exists && snapshot.value != null) {
+      final data = Map<String, dynamic>.from(snapshot.value as Map);
+      final user = UserModel.fromJson(data);
+      nameController.text = user.name ?? '';
+      nicknameController.text = user.nickname ?? '';
+    }
+  }
 
   @override
   void dispose() {
