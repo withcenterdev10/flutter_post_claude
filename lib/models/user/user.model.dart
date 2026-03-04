@@ -19,4 +19,13 @@ class UserModel {
       nickname: nickname ?? this.nickname,
     );
   }
+
+  factory UserModel.fromJson(Map<String, dynamic> json) {
+    return UserModel(
+      email: json['email'] as String?,
+      password: json['password'] as String?,
+      name: json['name'] as String?,
+      nickname: json['nickname'] as String?,
+    );
+  }
 }

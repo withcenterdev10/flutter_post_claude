@@ -41,9 +41,7 @@ class HomeScreen extends StatelessWidget {
           yes: () => Column(
             mainAxisSize: .min,
             children: [
-              UserData(
-                builder: (context, data) => Text("Name: ${data['nickname']}"),
-              ),
+              UserData(builder: (context, user) => Text("Name: ${user?.name}")),
               // Yes user :>
               ElevatedButton(
                 onPressed: () {

@@ -1,3 +1,4 @@
+import 'package:fb_test2/models/user/user.model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -5,7 +6,7 @@ import 'package:flutter/material.dart';
 class UserData extends StatelessWidget {
   const UserData({super.key, required this.builder});
 
-  final Widget Function(BuildContext context, Map<String, dynamic>) builder;
+  final Widget Function(BuildContext context, UserModel?) builder;
 
   @override
   Widget build(BuildContext context) {
@@ -20,9 +21,10 @@ class UserData extends StatelessWidget {
             snapshot.data.snapshot.value ?? {},
           ));
 
-          return builder(context, data);
+          final user = UserModel.fromJson(data);
+          return builder(context, user);
         } else {
-          return builder(context, {});
+          return builder(context, null);
         }
       },
     );
