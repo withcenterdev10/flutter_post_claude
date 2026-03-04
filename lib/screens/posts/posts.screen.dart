@@ -66,6 +66,24 @@ class PostsScreen extends StatelessWidget {
                                       )
                                       .child(Lists.posts.name)
                                       .child(post['id']!)
+                                      .update({
+                                        "title":
+                                            "post title ${rand.nextInt(1000)}",
+                                      });
+                                },
+                                icon: Icon(Icons.edit),
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  // TO_DO : Move this to Repository
+                                  // TO_DO : Use a model
+                                  FirebaseDatabase.instance
+                                      .ref(Lists.members.name)
+                                      .child(
+                                        FirebaseAuth.instance.currentUser!.uid,
+                                      )
+                                      .child(Lists.posts.name)
+                                      .child(post['id']!)
                                       .remove();
                                 },
                                 icon: Icon(Icons.delete),
