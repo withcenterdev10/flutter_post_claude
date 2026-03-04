@@ -4,20 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
-Future<void> test() async {
-  DatabaseReference postListRef = FirebaseDatabase.instance
-      .ref("members")
-      .child("cOqaUnIKgkWcKDPYXBalYsfoVVp2")
-      .child("posts");
+// Future<void> test() async {
+//   DatabaseReference postListRef = FirebaseDatabase.instance
+//       .ref("members")
+//       .child("cOqaUnIKgkWcKDPYXBalYsfoVVp2")
+//       .child("posts");
 
-  DatabaseReference newPostRef = postListRef.push();
-  newPostRef.update({"title": "post title 5"});
-}
+//   DatabaseReference newPostRef = postListRef.push();
+//   newPostRef.update({"title": "post title 5"});
+// }
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  await test();
+  // await test();
   runApp(const MyApp());
 }
 
