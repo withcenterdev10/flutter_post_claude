@@ -11,6 +11,8 @@ class UserPosts extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("Rebuilding");
+
     return StreamBuilder<DatabaseEvent>(
       stream: FirebaseDatabase.instance
           .ref(Lists.members.name)
