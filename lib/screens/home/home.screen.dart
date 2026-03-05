@@ -25,6 +25,9 @@ class HomeScreen extends StatelessWidget {
             mainAxisSize: .min,
             children: [
               ElevatedButton(
+                /// sample usage
+                /// final someModelIfReturnValIsNeeded = SomeService.instance.someMethod(someData1: 1, someData: 2)
+                /// SomeState.of(context).someMethodToUpdateTheState(someModelIfReturnValIsNeeded)
                 onPressed: () {
                   SignInScreen.push(context);
                 },
