@@ -1,5 +1,6 @@
 import 'package:fb_test2/screens/home/home.screen.dart';
 import 'package:fb_test2/services/user/user.service.dart';
+import 'package:fb_test2/states/user_state.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -31,48 +32,63 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return Scaffold(
       appBar: AppBar(title: Text("Sign Up")),
       body: SafeArea(
-        child: Form(
-          child: Column(
-            children: [
-              TextFormField(
-                controller: emailController,
-                decoration: InputDecoration(labelText: "Email"),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Email is required";
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: passwordController,
-                obscureText: true,
-                decoration: InputDecoration(labelText: "Password"),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Email is required";
-                  }
-                  return null;
-                },
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  try {
-                    await UserService.instance.signUp(
-                      emailController.text,
-                      passwordController.text,
-                    );
-
-                    if (context.mounted) {
-                      HomeScreen.go(context);
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Form(
+            child: Column(
+              children: [
+                TextFormField(
+                  controller: emailController,
+                  decoration: InputDecoration(labelText: "Email"),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Email is required";
                     }
-                  } catch (error) {
-                    debugPrint(error.toString());
-                  }
-                },
-                child: Text("Submit"),
-              ),
-            ],
+                    return null;
+                  },
+                ),
+                TextFormField(
+                  controller: passwordController,
+                  obscureText: true,
+                  decoration: InputDecoration(labelText: "Password"),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Email is required";
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () async {
+                    try {
+                      final user = await UserService.instance.signUp(
+                        emailController.text,
+                        passwordController.text,
+                      );
+
+                      if (context.mounted) {
+                        HomeScreen.go(context);
+                        UserState.of(context).setUser(user);
+                      }
+                    } catch (error) {
+                      debugPrint(error.toString());
+                    }
+                  },
+                  child: Text("Submit"),
+                ),
+                TextButton(
+                  onPressed: () {
+                    try {
+                      SignUpScreen.go(context);
+                    } catch (error) {
+                      debugPrint(error.toString());
+                    }
+                  },
+                  child: Text("Already have an account? Sign In instead"),
+                ),
+              ],
+            ),
           ),
         ),
       ),
