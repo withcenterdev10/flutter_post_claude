@@ -1,31 +1,46 @@
 class UserModel {
-  UserModel({this.email, this.password, this.name, this.nickname});
+  UserModel({
+    this.id,
+    this.email,
+    this.password,
+    this.name,
+    this.gender,
+    this.isLoggedIn,
+  });
 
+  final String? id;
   final String? email;
   final String? password;
   final String? name;
-  final String? nickname;
+  final String? gender;
+  final bool? isLoggedIn;
 
   UserModel copyWith({
+    String? id,
     String? email,
     String? password,
     String? name,
-    String? nickname,
+    String? gender,
+    bool? isLoggedIn,
   }) {
     return UserModel(
+      id: id ?? this.id,
       email: email ?? this.email,
       password: password ?? this.password,
       name: name ?? this.name,
-      nickname: nickname ?? this.nickname,
+      gender: gender ?? this.gender,
+      isLoggedIn: isLoggedIn ?? this.isLoggedIn,
     );
   }
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
+    final raw = json['is_logged_in'];
     return UserModel(
+      id: json['id'] as String?,
       email: json['email'] as String?,
-      password: json['password'] as String?,
       name: json['name'] as String?,
-      nickname: json['nickname'] as String?,
+      gender: json['gender'] as String?,
+      isLoggedIn: raw == true || raw == 1,
     );
   }
 }

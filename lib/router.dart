@@ -1,4 +1,5 @@
 import 'package:fb_test2/screens/home/home.screen.dart';
+import 'package:fb_test2/screens/posts/posts.create_post.screen.dart';
 import 'package:fb_test2/screens/posts/posts.screen.dart';
 import 'package:fb_test2/screens/profile/profile.screen.dart';
 import 'package:fb_test2/screens/sign_in/sign_in.screen.dart';
@@ -27,6 +28,10 @@ final router = GoRouter(
     GoRoute(
       path: PostsScreen.routeName,
       builder: (context, state) => const PostsScreen(),
+    ),
+    GoRoute(
+      path: CreatePostScreen.routeName,
+      builder: (context, state) => const CreatePostScreen(),
     ),
   ],
 );

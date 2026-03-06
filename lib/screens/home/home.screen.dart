@@ -1,8 +1,5 @@
-import 'package:fb_test2/screens/posts/posts.screen.dart';
-import 'package:fb_test2/screens/profile/profile.screen.dart';
 import 'package:fb_test2/screens/sign_in/sign_in.screen.dart';
-import 'package:fb_test2/screens/sign_up/sign_up.screen.dart';
-import 'package:fb_test2/services/user/user.service.dart';
+import 'package:fb_test2/widgets/home/home.drawer.dart';
 import 'package:fb_test2/widgets/user/user.data.dart';
 import 'package:fb_test2/widgets/user/user.ready.dart';
 import 'package:flutter/material.dart';
@@ -19,54 +16,34 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: UserReady(
-          no: () => Column(
-            mainAxisSize: .min,
-            children: [
-              ElevatedButton(
-                /// sample usage
-                /// final someModelIfReturnValIsNeeded = SomeService.instance.someMethod(someData1: 1, someData: 2)
-                /// SomeState.of(context).someMethodToUpdateTheState(someModelIfReturnValIsNeeded)
-                onPressed: () {
-                  SignInScreen.push(context);
-                },
-                child: Text("Sign In"),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  SignUpScreen.push(context);
-                },
-                child: Text("Sign Up"),
-              ),
-            ],
+      endDrawer: const HomeDrawer(),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        actions: [
+          UserReady(
+            yes: () => UserData(
+              builder: (context, user) {
+                final initials = ((user?.name ?? '').length >= 2
+                        ? user!.name!.substring(0, 2)
+                        : (user?.name ?? '??'))
+                    .toUpperCase();
+                return Builder(
+                  builder: (context) => IconButton(
+                    onPressed: () => Scaffold.of(context).openEndDrawer(),
+                    icon: CircleAvatar(child: Text(initials)),
+                  ),
+                );
+              },
+            ),
+            no: () => TextButton(
+              onPressed: () => SignInScreen.push(context),
+              child: const Text("Sign In"),
+            ),
           ),
-          yes: () => Column(
-            mainAxisSize: .min,
-            children: [
-              UserData(builder: (context, user) => Text("Name: ${user?.name}")),
-              ElevatedButton(
-                onPressed: () {
-                  UserService.instance.signOut();
-                  HomeScreen.go(context);
-                },
-                child: Text("Sign Out"),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  ProfileScreen.push(context);
-                },
-                child: Text("Profile"),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  PostsScreen.push(context);
-                },
-                child: Text("Fetch multiple data page"),
-              ),
-            ],
-          ),
-        ),
+        ],
+      ),
+      body: const Center(
+        child: Text("POSTS"),
       ),
     );
   }

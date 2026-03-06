@@ -1,4 +1,6 @@
+import 'package:fb_test2/states/user_state.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class UserReady extends StatelessWidget {
   const UserReady({super.key, required this.yes, this.no});
@@ -8,6 +10,10 @@ class UserReady extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return yes();
+    return Selector<UserState, bool>(
+      selector: (_, state) => state.user != null,
+      builder: (_, isLoggedIn, _) =>
+          isLoggedIn ? yes() : (no?.call() ?? const SizedBox.shrink()),
+    );
   }
 }

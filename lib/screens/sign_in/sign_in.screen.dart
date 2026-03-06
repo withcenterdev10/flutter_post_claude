@@ -1,5 +1,6 @@
 import 'package:fb_test2/screens/home/home.screen.dart';
 import 'package:fb_test2/services/user/user.service.dart';
+import 'package:fb_test2/states/user_state.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -16,8 +17,8 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreen extends State<SignInScreen> {
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+  final emailController = TextEditingController(text: "johny2@gmail.com");
+  final passwordController = TextEditingController(text: "asdasd");
 
   @override
   void dispose() {
@@ -58,12 +59,13 @@ class _SignInScreen extends State<SignInScreen> {
               ElevatedButton(
                 onPressed: () async {
                   try {
-                    await UserService.instance.signIn(
+                    final user = await UserService.instance.signIn(
                       emailController.text,
                       passwordController.text,
                     );
 
                     if (context.mounted) {
+                      UserState.of(context).setUser(user);
                       HomeScreen.go(context);
                     }
                   } catch (error) {

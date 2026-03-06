@@ -14,7 +14,7 @@ class ApiUtil {
   static final _instance = ApiUtil._();
   static ApiUtil get instance => _instance;
 
-  final _dio = Dio(BaseOptions(baseUrl: 'http://localhost:12345'));
+  final _dio = Dio(BaseOptions(baseUrl: 'http://localhost:8000'));
 
   Future<Response> get(String path, {Map<String, dynamic>? params}) =>
       _dio.get(path, queryParameters: params);

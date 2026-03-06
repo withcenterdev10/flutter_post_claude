@@ -172,6 +172,7 @@ Center(
 - State methods should accept models as parameters instead of direct values
 - State classes must have a static `.of()` method that returns `context.read<StateClass>()`
 - State classes must extend `ChangeNotifier`
+- Always use `StateClass.of(context).someMethod()` to update state — never hold a direct reference to the state instance and call methods on it
 
 Example:
 ```dart
@@ -201,6 +202,41 @@ ElevatedButton(
     SomeScreen.push(context);
   },
   child: Text("SomeText"),
+)
+```
+
+---
+
+## Forms
+
+- Use the `Form` widget with a `GlobalKey<FormState>`
+- Use `TextFormField` (not `TextField`) inside forms
+- Always add a `validator` to each `TextFormField`
+- Call `_formKey.currentState!.validate()` before processing submission
+
+Example:
+```dart
+final _formKey = GlobalKey<FormState>();
+
+Form(
+  key: _formKey,
+  child: Column(
+    children: [
+      TextFormField(
+        controller: _controller,
+        decoration: const InputDecoration(labelText: "Field"),
+        validator: (value) =>
+            (value == null || value.trim().isEmpty) ? "Field is required" : null,
+      ),
+      ElevatedButton(
+        onPressed: () {
+          if (!_formKey.currentState!.validate()) return;
+          // proceed
+        },
+        child: const Text("Submit"),
+      ),
+    ],
+  ),
 )
 ```
 

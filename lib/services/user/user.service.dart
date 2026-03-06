@@ -9,25 +9,30 @@ class UserService {
 
   final UserRepository _repository = UserRepository.instance;
 
-  Future<void> signIn(String email, String password) async {
+  Future<UserModel> signIn(String email, String password) async {
     final model = UserModel(email: email, password: password);
-    await _repository.signIn(model);
+    return await _repository.signIn(model);
   }
 
-  Future<void> signUp(String email, String password) async {
+  Future<UserModel> signUp(String email, String password) async {
     final model = UserModel(email: email, password: password);
-    await _repository.signUp(model);
+    return await _repository.signUp(model);
   }
 
-  Future<void> updateUser({
+  Future<UserModel?> fetchUser(String id) async {
+    return await _repository.fetchUser(id);
+  }
+
+  Future<UserModel> updateUser({
+    required String id,
     required String name,
-    required String nickname,
+    required String gender,
   }) async {
-    final model = UserModel(name: name, nickname: nickname);
-    await _repository.updateUser(model);
+    final model = UserModel(id: id, name: name, gender: gender);
+    return await _repository.updateUser(model);
   }
 
-  Future<void> signOut() async {
-    await _repository.signOut();
+  Future<void> signOut(UserModel model) async {
+    await _repository.signOut(model);
   }
 }

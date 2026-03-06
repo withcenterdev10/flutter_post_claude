@@ -1,5 +1,6 @@
 import 'package:fb_test2/screens/home/home.screen.dart';
 import 'package:fb_test2/services/user/user.service.dart';
+import 'package:fb_test2/states/user_state.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -18,19 +19,57 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final formKey = GlobalKey<FormState>();
   final nameController = TextEditingController();
-  final nicknameController = TextEditingController();
+  String? _selectedGender;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final user = UserState.of(context).user;
+      nameController.text = user?.name ?? '';
+      final gender = user?.gender ?? '';
+      setState(() => _selectedGender = gender.isNotEmpty ? gender : null);
+    });
+  }
 
   @override
   void dispose() {
     nameController.dispose();
-    nicknameController.dispose();
     super.dispose();
+  }
+
+  Future<void> _onSubmit(BuildContext context) async {
+    if (!formKey.currentState!.validate()) return;
+    setState(() => _isLoading = true);
+    try {
+      final id = UserState.of(context).user?.id;
+      if (id == null) return;
+
+      final updatedUser = await UserService.instance.updateUser(
+        id: id,
+        name: nameController.text.trim(),
+        gender: _selectedGender ?? '',
+      );
+
+      if (context.mounted) {
+        UserState.of(context).setUser(updatedUser);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Profile Updated")),
+        );
+        HomeScreen.go(context);
+      }
+    } catch (error) {
+      debugPrint(error.toString());
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Profile")),
+      appBar: AppBar(title: const Text("Profile")),
       body: Center(
         child: Form(
           key: formKey,
@@ -38,44 +77,45 @@ class _ProfileScreenState extends State<ProfileScreen> {
             children: [
               TextFormField(
                 controller: nameController,
-                decoration: InputDecoration(labelText: "name"),
+                decoration: const InputDecoration(labelText: "Name"),
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "name is required";
+                  if (value == null || value.trim().isEmpty) {
+                    return "Name is required";
                   }
                   return null;
                 },
               ),
-              TextFormField(
-                controller: nicknameController,
-                decoration: InputDecoration(labelText: "nickname"),
+              DropdownButtonFormField<String>(
+                initialValue: _selectedGender,
+                decoration: const InputDecoration(labelText: "Gender"),
+                items: const [
+                  DropdownMenuItem(value: 'male', child: Text("Male")),
+                  DropdownMenuItem(value: 'female', child: Text("Female")),
+                ],
+                onChanged: (value) => setState(() => _selectedGender = value),
                 validator: (value) {
-                  if (value != null && value.isNotEmpty && value.length < 3) {
-                    return "Nickname must at least 3 characters";
+                  if (value == null || value.isEmpty) {
+                    return "Gender is required";
                   }
                   return null;
                 },
               ),
               ElevatedButton(
-                onPressed: () async {
-                  if (formKey.currentState!.validate()) {
-                    try {
-                      await UserService.instance.updateUser(
-                        name: nameController.text,
-                        nickname: nicknameController.text,
-                      );
-                      if (context.mounted) {
-                        HomeScreen.go(context);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("Profile Updated")),
-                        );
-                      }
-                    } catch (error) {
-                      debugPrint(error.toString());
-                    }
-                  }
-                },
-                child: Text("Submit"),
+                onPressed: _isLoading ? null : () => _onSubmit(context),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text("Submit"),
+                    if (_isLoading) ...[
+                      const SizedBox(width: 8),
+                      const SizedBox(
+                        width: 14,
+                        height: 14,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    ],
+                  ],
+                ),
               ),
             ],
           ),
